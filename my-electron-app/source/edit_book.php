@@ -15,19 +15,19 @@ if ($conn->connect_error) {
     die(json_encode(['success' => false, 'message' => "Connection failed: " . $conn->connect_error]));
 }
 
-$a_no = $_GET['a_no'];
+$a_no = $_POST['a_no'];
+$author = $_POST['author'];
+$title = $_POST['title'];
+$no_of_pages = $_POST['no_of_pages'];
+$publisher = $_POST['publisher'];
+$date_of_purchase = $_POST['date_of_purchase'];
 
-$sql = "SELECT * FROM $table WHERE A_no = ?";
+$sql = "UPDATE $table SET Author = ?, Title = ?, No_of_pages = ?, Publisher = ?, Date_of_purchase = ? WHERE A_no = ?";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $a_no);
+$stmt->bind_param("ssissi", $author, $title, $no_of_pages, $publisher, $date_of_purchase, $a_no);
 
 if ($stmt->execute()) {
-    $result = $stmt->get_result();
-    if ($result->num_rows > 0) {
-        echo json_encode($result->fetch_assoc());
-    } else {
-        echo json_encode(['success' => false, 'message' => 'No book found']);
-    }
+    echo json_encode(['success' => true]);
 } else {
     echo json_encode(['success' => false, 'message' => $stmt->error]);
 }

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Book</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 1em;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+        div {
+            margin-bottom: 1em;
+        }
+        label {
+            margin-bottom: .5em;
+            color: #333333;
+            display: block;
+        }
+        input[type="text"], input[type="date"], input[type="number"] {
+            border: 1px solid #CCCCCC;
+            padding: .5em;
+            font-size: 1em;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 0.7em;
+            color: #fff;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h2>Edit Book</h2>
+    <form id="editBookForm">
+        <input type="hidden" id="a_no" name="a_no">
+        <div>
+            <label for="author">Author</label>
+            <input type="text" id="author" name="author" required>
+        </div>
+        <div>
+            <label for="title">Title</label>
+            <input type="text" id="title" name="title" required>
+        </div>
+        <div>
+            <label for="no_of_pages">Number of Pages</label>
+            <input type="number" id="no_of_pages" name="no_of_pages" required>
+        </div>
+        <div>
+            <label for="publisher">Publisher</label>
+            <input type="text" id="publisher" name="publisher" required>
+        </div>
+        <div>
+            <label for="date_of_purchase">Date of Purchase</label>
+            <input type="date" id="date_of_purchase" name="date_of_purchase" required>
+        </div>
+        <button type="submit">Update Book</button>
+    </form>
+
+    <script>
+        // Get book data from localStorage or URL parameters
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const a_no = urlParams.get('a_no');
+
+            if (a_no) {
+                fetchBookDetails(a_no);
+            }
+        });
+
+        function fetchBookDetails(a_no) {
+            fetch(`fetch_book.php?a_no=${a_no}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('a_no').value = data.A_no;
+                    document.getElementById('author').value = data.Author;
+                    document.getElementById('title').value = data.Title;
+                    document.getElementById('no_of_pages').value = data.No_of_pages;
+                    document.getElementById('publisher').value = data.Publisher;
+                    document.getElementById('date_of_purchase').value = data.Date_of_purchase;
+                })
+                .catch(error => console.error('Error fetching book details:', error));
+        }
+
+        document.getElementById('editBookForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            fetch('edit_book.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Book updated successfully!');
+                    window.location.href = 'BooksMS.html';
+                } else {
+                    alert('Error updating book: ' + data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
