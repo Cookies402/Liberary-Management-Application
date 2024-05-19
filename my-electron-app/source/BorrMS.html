@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borrowers Management</title>
+    <a href="../index.html">Homepage</a>
+    <a href="BooksMS.html">Book Management System</a>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Borrowers Management</h1>
+
+<form id="addForm">
+    <label for="name">A.no:</label>
+    <input type="text" id="A.no" name="A.no" required><br><br>
+    <label for="name">Name of the book:</label>
+    <input type="text" id="name" name="name" required><br><br>
+    <label for="contact">Class of Student/Contact of the Person:</label>
+    <input type="text" id="contact" name="contact" required><br><br>
+    <label for="membershipID">Name of Student/Person:</label>
+    <input type="text" id="membershipID" name="membershipID" required><br><br>
+    <button type="submit">Add Borrower</button>
+</form>
+
+<table id="borrowersTable">
+    <tr>
+        <th>A.no</th>
+        <th>Book</th>
+        <th>Contact/Class</th>
+        <th>Name of Student/Person</th>
+        <th>Time Remaining</th>
+        <th>Action</th>
+    </tr>
+</table>
+
+<script>
+    const addForm = document.getElementById('addForm');
+    const table = document.getElementById('borrowersTable');
+
+    addForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const name = document.getElementById('name').value;
+        const contact = document.getElementById('contact').value;
+        const membershipID = document.getElementById('membershipID').value;
+
+        const borrowDate = new Date();
+        const returnDate = new Date(borrowDate.getTime() + 7 * 24 * 60 * 60 * 1000); // Adding 7 days
+
+        const newRow = table.insertRow(-1);
+        const cell1 = newRow.insertCell(0);
+        const cell2 = newRow.insertCell(1);
+        const cell3 = newRow.insertCell(2);
+        const cell4 = newRow.insertCell(3);
+        const cell5 = newRow.insertCell(4);
+
+        cell1.textContent = name;
+        cell2.textContent = contact;
+        cell3.textContent = membershipID;
+
+        // Function to update time remaining
+        function updateTimeRemaining() {
+            const timeDiff = returnDate - Date.now();
+            if (timeDiff > 0) {
+                const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+                cell4.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            } else {
+                clearInterval(timerId);
+                cell4.textContent = "Expired";
+                cell5.innerHTML = '<button class="borrowAgain">Borrow Again</button>';
+                const borrowAgainButton = cell5.querySelector('.borrowAgain');
+                borrowAgainButton.addEventListener('click', () => {
+                    newRow.remove(); // Remove the current row
+                    // You can add your borrowing process logic here
+                });
+            }
+        }
+
+        updateTimeRemaining(); // Update initially
+        const timerId = setInterval(updateTimeRemaining, 1000); // Update every second
+
+        // Add delete button
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Remove';
+        deleteButton.addEventListener('click', function() {
+            clearInterval(timerId); // Clear the timer
+            table.deleteRow(newRow.rowIndex);
+        });
+
+        cell5.appendChild(deleteButton);
+
+        addForm.reset();
+    });
+</script>
+
+</body>
+</html>
