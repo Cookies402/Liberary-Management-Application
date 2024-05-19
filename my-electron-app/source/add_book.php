@@ -15,15 +15,16 @@ if ($conn->connect_error) {
     die(json_encode(['success' => false, 'message' => "Connection failed: " . $conn->connect_error]));
 }
 
+$a_no = $_POST['a_no'];
 $author = $_POST['author'];
 $title = $_POST['title'];
 $no_of_pages = $_POST['no_of_pages'];
 $publisher = $_POST['publisher'];
 $date_of_purchase = $_POST['date_of_purchase'];
 
-$sql = "INSERT INTO $table (Author, Title, No_of_pages, Publisher, Date_of_purchase) VALUES (?, ?, ?, ?, ?)";
+$sql = "INSERT INTO $table (A_no, Author, Title, No_of_pages, Publisher, Date_of_purchase) VALUES (?, ?, ?, ?, ?, ?)";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("ssiss", $author, $title, $no_of_pages, $publisher, $date_of_purchase);
+$stmt->bind_param("ississ", $a_no, $author, $title, $no_of_pages, $publisher, $date_of_purchase);
 
 if ($stmt->execute()) {
     echo json_encode(['success' => true]);
