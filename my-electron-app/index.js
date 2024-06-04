@@ -155,3 +155,81 @@ ipcMain.handle('delete-book', async (event, bookId) => {
       });
   });
 });
+
+// IPC handler to fetch all borrowers
+ipcMain.handle('fetch-borrowers', async () => {
+    return new Promise((resolve, reject) => {
+        const query = 'SELECT * FROM BorrowersList';
+        connection.query(query, (err, results) => {
+            if (err) {
+                console.error('Error fetching borrowers:', err);
+                reject('Failed to fetch borrowers.');
+            } else {
+                resolve(results);
+            }
+        });
+    });
+});
+
+// IPC handler to add a new borrower
+ipcMain.handle('add-borrower', async (event, borrower) => {
+    return new Promise((resolve, reject) => {
+        const query = 'INSERT INTO BorrowersList (Name, Class, A_no, Title, Date_of_borrowing) VALUES (?, ?, ?, ?, ?)';
+        const values = [borrower.name, borrower.class, borrower.aNo, borrower.title, borrower.dateOfBorrowing];
+        connection.query(query, values, (err, results) => {
+            if (err) {
+                console.error('Error adding borrower:', err);
+                reject('Failed to add borrower.');
+            } else {
+                resolve('Borrower added successfully.');
+            }
+        });
+    });
+});
+
+
+// IPC handler to load a borrower by ID
+ipcMain.handle('load-borrower', async (event, id) => {
+    return new Promise((resolve, reject) => {
+        const query = 'SELECT * FROM BorrowersList WHERE A_no = ?';
+        connection.query(query, [id], (err, results) => {
+            if (err) {
+                console.error('Error loading borrower:', err);
+                reject('Failed to load borrower.');
+            } else {
+                resolve(results[0]);
+            }
+        });
+    });
+});
+
+// IPC handler to edit a borrower (including Date of Return)
+ipcMain.handle('edit-borrower', async (event, borrower) => {
+    return new Promise((resolve, reject) => {
+        const query = 'UPDATE BorrowersList SET Name = ?, Class = ?, A_no = ?, Title = ?, Date_of_borrowing = ?, Date_of_return = ? WHERE Student_id = ?';
+        const values = [borrower.name, borrower.class, borrower.aNo, borrower.title, borrower.dateOfBorrowing, borrower.dateOfReturn, borrower.studentId];
+        connection.query(query, values, (err, results) => {
+            if (err) {
+                console.error('Error editing borrower:', err);
+                reject('Failed to edit borrower.');
+            } else {
+                resolve('Borrower edited successfully.');
+            }
+        });
+    });
+});
+
+// IPC handler to delete a borrower
+ipcMain.handle('delete-borrower', async (event, id) => {
+    return new Promise((resolve, reject) => {
+        const query = 'DELETE FROM BorrowersList WHERE A_no = ?';
+        connection.query(query, [id], (err, results) => {
+            if (err) {
+                console.error('Error deleting borrower:', err);
+                reject('Failed to delete borrower.');
+            } else {
+                resolve('Borrower deleted successfully.');
+            }
+        });
+    });
+});
