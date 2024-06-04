@@ -1,99 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Book</title>
-    <a href="BooksMS.html">Book Management System</a>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        form {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 1em;
-            background: #f9f9f9;
-            border-radius: 5px;
-        }
-        div {
-            margin-bottom: 1em;
-        }
-        label {
-            margin-bottom: .5em;
-            color: #333333;
-            display: block;
-        }
-        input[type="text"], input[type="date"], input[type="number"] {
-            border: 1px solid #CCCCCC;
-            padding: .5em;
-            font-size: 1em;
-            width: 100%;
-            box-sizing: border-box;
-        }
-        button {
-            padding: 0.7em;
-            color: #fff;
-            background-color: #007BFF;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Book</title>
+<a href="BooksMS.html">Back</a>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+    .form-container {
+        width: 300px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
+    .form-container input, .form-container button {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+</style>
 </head>
 <body>
-    <h2>Add New Book</h2>
-    <form id="addBookForm">
-        <div>
-            <label for="a_no">A.no</label>
-            <input type="number" id="a_no" name="a_no" required>
-        </div>
-        <div>
-            <label for="author">Author</label>
-            <input type="text" id="author" name="author" required>
-        </div>
-        <div>
-            <label for="title">Title</label>
-            <input type="text" id="title" name="title" required>
-        </div>
-        <div>
-            <label for="no_of_pages">Number of Pages</label>
-            <input type="number" id="no_of_pages" name="no_of_pages" required>
-        </div>
-        <div>
-            <label for="publisher">Publisher</label>
-            <input type="text" id="publisher" name="publisher" required>
-        </div>
-        <div>
-            <label for="date_of_purchase">Date of Purchase</label>
-            <input type="date" id="date_of_purchase" name="date_of_purchase" required>
-        </div>
-        <button type="submit">Add Book</button>
-    </form>
+<div class="form-container">
+    <h2>Add Book</h2>
+    <input type="number" id="aNo" placeholder="A.no" required>
+    <input type="text" id="author" placeholder="Author" required>
+    <input type="text" id="title" placeholder="Title" required>
+    <input type="number" id="pages" placeholder="No of pages" required>
+    <input type="text" id="publisher" placeholder="Publisher" required>
+    <input type="date" id="purchaseDate" placeholder="Date of purchase" required>
+    <input type="number" step="0.01" id="cost" placeholder="Cost" required>
+    <button type="button" onclick="addBook()">Add Book</button>
+</div>
 
-    <script>
-        document.getElementById('addBookForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const formData = new FormData(this);
+<script>
+    function addBook() {
+        const book = {
+            aNo: document.getElementById('aNo').value,
+            author: document.getElementById('author').value,
+            title: document.getElementById('title').value,
+            pages: document.getElementById('pages').value,
+            publisher: document.getElementById('publisher').value,
+            purchaseDate: document.getElementById('purchaseDate').value,
+            cost: document.getElementById('cost').value
+        };
 
-            fetch('add_book.php', {
-                method: 'POST',
-                body: formData
+        window.ipcRenderer.invoke('add-book', book)
+            .then(response => {
+                alert(response);
+                window.location.href = 'BooksMS.html';
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Book added successfully!');
-                    window.location.href = 'BooksMS.html';
-                } else {
-                    alert('Error adding book: ' + data.message);
-                }
-            })
-            .catch(error => console.error('Error:', error));
-        });
-    </script>
+            .catch(error => {
+                console.error('Error adding book:', error);
+                alert('Failed to add book.');
+            });
+    }
+</script>
 </body>
 </html>
+    

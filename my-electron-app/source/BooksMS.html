@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Book Management System</title>
+<a href="../index.html">Homepage</a>
+<a href="BorrMS.html">Borrowers Management System</a>
 <style>
     /* Some basic styling */
     body {
@@ -33,8 +35,9 @@
 <h2>Book Management System</h2>
 
 <div class="button-group">
-    <input type="text" id="searchBar" placeholder="Search books">
+    <input type="text" id="searchBar" placeholder="Search books" oninput="fetchBooks()">
     <button type="button" onclick="location.href='AddBook.html'">Add Book</button>
+    <button type="button" onclick="location.href='EditBook.html'">Edit Book Info</button>
 </div>
 
 <table id="bookTable">
@@ -61,60 +64,46 @@
     });
 
     function fetchBooks() {
-        fetch('fetch_books.php')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok ' + response.statusText);
-                }
-                return response.json();
-            })
+        const query = document.getElementById('searchBar').value;
+        window.ipcRenderer.invoke('fetch-books', query)
             .then(data => {
-                books = data;
-                displayBooks();
+                displayBooks(data);
             })
             .catch(error => console.error('Error fetching books:', error));
-    
     }
+    
 
-    function displayBooks() {
+    function displayBooks(books) {
         const bookList = document.getElementById('bookList');
         bookList.innerHTML = '';
-    
+
         books.forEach(book => {
             const row = `
                 <tr>
-                    <td>${book.A_no}</td>
-                    <td>${book.Author}</td>
-                    <td>${book.Title}</td>
-                    <td>${book.No_of_pages}</td>
-                    <td>${book.Publisher}</td>
-                    <td>${book.Date_of_purchase}</td>
-                    <td><button onclick="deleteBook(${book.A_no})">Delete</button></td>
+                    <td>${book['A_no']}</td>
+                    <td>${book['Author']}</td>
+                    <td>${book['Title']}</td>
+                    <td>${book['No_of_pages']}</td>
+                    <td>${book['Publisher']}</td>
+                    <td>${book['Date_of_purchase']}</td>
+                    <td>${book['Cost']}</td>
+                    <td>
+                        <button onclick="deleteBook(${book['A_no']})">Delete</button>
+                    </td>
                 </tr>
             `;
             bookList.innerHTML += row;
         });
     }
 
-    function deleteBook(a_no) {
+    function deleteBook(bookId) {
         if (confirm("Are you sure you want to remove this book?")) {
-            fetch('delete_book.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `a_no=${a_no}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Book deleted successfully!');
+            window.ipcRenderer.invoke('delete-book', bookId)
+                .then(response => {
+                    alert(response);
                     fetchBooks();
-                } else {
-                    alert('Error deleting book: ' + data.message);
-                }
-            })
-            .catch(error => console.error('Error:', error));
+                })
+                .catch(error => console.error('Error deleting book:', error));
         }
     }
 </script>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Borrower</title>
+    <a href="BorrMS.html">Back</a>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input, button {
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Edit Borrower</h1>
+
+<form id="editBorrowerForm">
+    <label for="studentId">Student ID:</label>
+    <input type="text" id="studentId" required><br><br>
+    <label for="name">Name:</label>
+    <input type="text" id="name" required><br><br>
+    <label for="class">Class:</label>
+    <input type="text" id="class" required><br><br>
+    <label for="aNo">A.no of Borrowed Book:</label>
+    <input type="text" id="aNo" required><br><br>
+    <label for="title">Title of Borrowed Book:</label>
+    <input type="text" id="title" required><br><br>
+    <label for="dateOfBorrowing">Date of Borrowing:</label>
+    <input type="date" id="dateOfBorrowing" required><br><br>
+    <label for="dateOfReturn">Date of Return:</label>
+    <input type="date" id="dateOfReturn"><br><br>
+    <button type="submit">Update Borrower</button>
+</form>
+
+<script>
+    const { ipcRenderer } = window;
+
+    const editForm = document.getElementById('editBorrowerForm');
+
+    editForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const borrower = {
+            studentId: document.getElementById('studentId').value,
+            name: document.getElementById('name').value,
+            class: document.getElementById('class').value,
+            aNo: document.getElementById('aNo').value,
+            title: document.getElementById('title').value,
+            dateOfBorrowing: document.getElementById('dateOfBorrowing').value,
+            dateOfReturn: document.getElementById('dateOfReturn').value
+        };
+
+        try {
+            const response = await ipcRenderer.invoke('edit-borrower', borrower);
+            alert(response);
+            window.location.href = 'BorrMS.html'; // Redirect to Borrower Management page
+        } catch (error) {
+            alert(error);
+        }
+    });
+</script>
+
+</body>
+</html>
