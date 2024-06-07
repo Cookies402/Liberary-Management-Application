@@ -4,63 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Borrowers Management</title>
-    <a href="../index.html">Homepage</a>
-    <a href="BooksMS.html">Book Management System</a>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        form {
-            margin-bottom: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <a href="../index.html">Homepage</a>
+    <a href="BooksMS.html">Book Management System</a>
+    
+    <h1>Borrowers Management</h1>
 
-<h1>Borrowers Management</h1>
+    <div>
+        <button onclick="location.href='addBorrower.html'">Add Borrower</button>
+        <button onclick="location.href='editBorrower.html'">Edit Borrower Info</button>
+        <button id="viewBorrowerHistoryButton">View Borrower History</button>
+        <button id="penaltyButton">Penalty</button>
+    </div>
 
-<div>
-    <button onclick="location.href='addBorrower.html'">Add Borrower</button>
-    <button onclick="location.href='editBorrower.html'">Edit Borrower Info</button>
-    <button id="viewBorrowerHistoryButton">View Borrower History</button>
-    <button id="viewBookHistoryButton">View Book Borrow History</button>
-    <button id="penaltyButton">Penalty</button>
-</div>
+    <h2>Search Borrowers</h2>
+    <form id="searchForm">
+        <input type="text" id="searchQuery" name="searchQuery" placeholder="Search...">
+    </form>
 
-<h2>Search Borrowers</h2>
-<form id="searchForm">
-    <input type="text" id="searchQuery" name="searchQuery" placeholder="Search...">
-</form>
+    <table id="borrowersTable">
+        <tr>
+            <th>Student ID</th>
+            <th>Name</th>
+            <th>Class</th>
+            <th>A.no of Borrowed Book</th>
+            <th>Title of Borrowed Book</th>
+            <th>Date of Borrowing</th>
+            <th>Date of Return</th>
+            <th>Action</th>
+        </tr>
+    </table>
 
-<table id="borrowersTable">
-    <tr>
-        <th>Student ID</th>
-        <th>Name</th>
-        <th>Class</th>
-        <th>A.no of Borrowed Book</th>
-        <th>Title of Borrowed Book</th>
-        <th>Date of Borrowing</th>
-        <th>Date of Return</th>
-        <th>Action</th>
-    </tr>
-</table>
-
-<script>
-    // Your JavaScript code goes here
-</script>
+    <script>
+        // Your JavaScript code goes here
+    </script>
 
 </body>
 </html>

@@ -4,32 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Edit Book</title>
-<a href="BooksMS.html">Back</a>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-    }
-    .form-container {
-        width: 300px;
-        margin: 0 auto;
-        padding: 20px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        background-color: #f9f9f9;
-    }
-    .form-container input, .form-container button {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 10px;
-    }
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="form-container">
-    <h2>Edit Book</h2>
-    <input type="number" id="aNo" placeholder="A.no" required>
-    <button type="button" onclick="loadBook()">Load Book</button>
-    <div id="bookDetails" style="display: none;">
+    <a href="BooksMS.html">Back</a>
+    <h2>Edit Book Information</h2>
+    <div class="form-container">
+        <input type="number" id="aNo" placeholder="A.no" required>
         <input type="text" id="author" placeholder="Author" required>
         <input type="text" id="title" placeholder="Title" required>
         <input type="number" id="pages" placeholder="No of pages" required>
@@ -38,52 +19,28 @@
         <input type="number" step="0.01" id="cost" placeholder="Cost" required>
         <button type="button" onclick="editBook()">Edit Book</button>
     </div>
-</div>
+    <script>
+        function editBook() {
+            const book = {
+                aNo: document.getElementById('aNo').value,
+                author: document.getElementById('author').value,
+                title: document.getElementById('title').value,
+                pages: document.getElementById('pages').value,
+                publisher: document.getElementById('publisher').value,
+                purchaseDate: document.getElementById('purchaseDate').value,
+                cost: document.getElementById('cost').value
+            };
 
-<script>
-    function loadBook() {
-        const aNo = document.getElementById('aNo').value;
-        window.ipcRenderer.invoke('load-book', aNo)
-            .then(book => {
-                if (book) {
-                    document.getElementById('author').value = book.Author;
-                    document.getElementById('title').value = book.Title;
-                    document.getElementById('pages').value = book.No_of_pages;
-                    document.getElementById('publisher').value = book.Publisher;
-                    document.getElementById('purchaseDate').value = book.Date_of_purchase;
-                    document.getElementById('cost').value = book.Cost;
-                    document.getElementById('bookDetails').style.display = 'block';
-                } else {
-                    alert('Book not found');
-                }
-            })
-            .catch(error => {
-                console.error('Error loading book:', error);
-                alert('Failed to load book.');
-            });
-    }
-
-    function editBook() {
-        const book = {
-            aNo: document.getElementById('aNo').value,
-            author: document.getElementById('author').value,
-            title: document.getElementById('title').value,
-            pages: document.getElementById('pages').value,
-            publisher: document.getElementById('publisher').value,
-            purchaseDate: document.getElementById('purchaseDate').value,
-            cost: document.getElementById('cost').value
-        };
-
-        window.ipcRenderer.invoke('edit-book', book)
-            .then(response => {
-                alert(response);
-                window.location.href = 'BooksMS.html';
-            })
-            .catch(error => {
-                console.error('Error editing book:', error);
-                alert('Failed to edit book.');
-            });
-    }
-</script>
+            window.ipcRenderer.invoke('edit-book', book)
+                .then(response => {
+                    alert(response);
+                    window.location.href = 'BooksMS.html';
+                })
+                .catch(error => {
+                    console.error('Error editing book:', error);
+                    alert('Failed to edit book.');
+                });
+        }
+    </script>
 </body>
 </html>

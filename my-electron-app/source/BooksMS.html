@@ -4,108 +4,87 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Book Management System</title>
-<a href="../index.html">Homepage</a>
-<a href="BorrMS.html">Borrowers Management System</a>
-<style>
-    /* Some basic styling */
-    body {
-        font-family: Arial, sans-serif;
-    }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    th, td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: left;
-    }
-    th {
-        background-color: #f2f2f2;
-    }
-    .button-group {
-        margin-bottom: 20px;
-    }
-    .button-group input, .button-group button {
-        margin-right: 10px;
-    }
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-<h2>Book Management System</h2>
+    <a href="../index.html">Homepage</a>
+    <a href="BorrMS.html">Borrowers Management System</a>
 
-<div class="button-group">
-    <input type="text" id="searchBar" placeholder="Search books" oninput="fetchBooks()">
-    <button type="button" onclick="location.href='AddBook.html'">Add Book</button>
-    <button type="button" onclick="location.href='EditBook.html'">Edit Book Info</button>
-</div>
+    <h2>Book Management System</h2>
 
-<table id="bookTable">
-    <thead>
-        <tr>
-            <th>A.no</th>
-            <th>Author</th>
-            <th>Title</th>
-            <th>No of pages</th>
-            <th>Publisher</th>
-            <th>Date of purchase</th>
-            <th>Cost</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody id="bookList">
-        <!-- Book records will be displayed here -->
-    </tbody>
-</table>
+    <div class="button-group">
+        <input type="text" id="searchBar" placeholder="Search books" oninput="fetchBooks()">
+        <button type="button" onclick="location.href='AddBook.html'">Add Book</button>
+        <button type="button" onclick="location.href='EditBook.html'">Edit Book Info</button>
+        <button id="viewBookHistoryButton">View Book Borrow History</button>    
+    </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        fetchBooks();
-    });
+    <table id="bookTable">
+        <thead>
+            <tr>
+                <th>A.no</th>
+                <th>Author</th>
+                <th>Title</th>
+                <th>No of pages</th>
+                <th>Publisher</th>
+                <th>Date of purchase</th>
+                <th>Cost</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="bookList">
+            <!-- Book records will be displayed here -->
+        </tbody>
+    </table>
 
-    function fetchBooks() {
-        const query = document.getElementById('searchBar').value;
-        window.ipcRenderer.invoke('fetch-books', query)
-            .then(data => {
-                displayBooks(data);
-            })
-            .catch(error => console.error('Error fetching books:', error));
-    }
-    
-
-    function displayBooks(books) {
-        const bookList = document.getElementById('bookList');
-        bookList.innerHTML = '';
-
-        books.forEach(book => {
-            const row = `
-                <tr>
-                    <td>${book['A_no']}</td>
-                    <td>${book['Author']}</td>
-                    <td>${book['Title']}</td>
-                    <td>${book['No_of_pages']}</td>
-                    <td>${book['Publisher']}</td>
-                    <td>${book['Date_of_purchase']}</td>
-                    <td>${book['Cost']}</td>
-                    <td>
-                        <button onclick="deleteBook(${book['A_no']})">Delete</button>
-                    </td>
-                </tr>
-            `;
-            bookList.innerHTML += row;
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchBooks();
         });
-    }
 
-    function deleteBook(bookId) {
-        if (confirm("Are you sure you want to remove this book?")) {
-            window.ipcRenderer.invoke('delete-book', bookId)
-                .then(response => {
-                    alert(response);
-                    fetchBooks();
+        function fetchBooks() {
+            const query = document.getElementById('searchBar').value;
+            window.ipcRenderer.invoke('fetch-books', query)
+                .then(data => {
+                    displayBooks(data);
                 })
-                .catch(error => console.error('Error deleting book:', error));
+                .catch(error => console.error('Error fetching books:', error));
         }
-    }
-</script>
+        
+
+        function displayBooks(books) {
+            const bookList = document.getElementById('bookList');
+            bookList.innerHTML = '';
+
+            books.forEach(book => {
+                const row = `
+                    <tr>
+                        <td>${book['A_no']}</td>
+                        <td>${book['Author']}</td>
+                        <td>${book['Title']}</td>
+                        <td>${book['No_of_pages']}</td>
+                        <td>${book['Publisher']}</td>
+                        <td>${book['Date_of_purchase']}</td>
+                        <td>${book['Cost']}</td>
+                        <td>
+                            <button onclick="deleteBook(${book['A_no']})">Delete</button>
+                        </td>
+                    </tr>
+                `;
+                bookList.innerHTML += row;
+            });
+        }
+
+        function deleteBook(bookId) {
+            if (confirm("Are you sure you want to remove this book?")) {
+                window.ipcRenderer.invoke('delete-book', bookId)
+                    .then(response => {
+                        alert(response);
+                        fetchBooks();
+                    })
+                    .catch(error => console.error('Error deleting book:', error));
+            }
+        }
+    </script>
 </body>
 </html>

@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Borrower History</title>
-    <a href="BorrMS.html">Back</a>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <a href="BorrMS.html">Back</a>
     <h1>Borrower History</h1>
-
-    <!-- Search Bar -->
-    <input type="text" id="searchBar" placeholder="Search borrowers">
-
-    <!-- Table to display borrower history -->
-    <table id="borrowerHistoryTable">
+    <h2>Search Borrower History</h2>
+    <form id="searchForm">
+        <input type="text" id="searchQuery" name="searchQuery" placeholder="Search...">
+    </form>
+    <table id="borrowersHistoryTable">
         <thead>
             <tr>
                 <th>Student ID</th>
@@ -25,43 +25,9 @@
                 <th>Date of Return</th>
             </tr>
         </thead>
-        <tbody id="borrowerHistoryBody">
-            <!-- Borrower history data will be displayed here -->
+        <tbody>
+            <!-- Borrower history will be dynamically loaded here -->
         </tbody>
     </table>
-
-    <script>
-        // JavaScript code to fetch and display borrower history
-        document.addEventListener('DOMContentLoaded', function() {
-            fetchBorrowerHistory();
-        });
-
-        function fetchBorrowerHistory() {
-            fetch('fetch_borrower_history.php')
-                .then(response => response.json())
-                .then(data => displayBorrowerHistory(data))
-                .catch(error => console.error('Error fetching borrower history:', error));
-        }
-
-        function displayBorrowerHistory(borrowers) {
-            const borrowerHistoryBody = document.getElementById('borrowerHistoryBody');
-            borrowerHistoryBody.innerHTML = ''; // Clear previous data
-
-            borrowers.forEach(borrower => {
-                const row = `
-                    <tr>
-                        <td>${borrower.studentId}</td>
-                        <td>${borrower.name}</td>
-                        <td>${borrower.class}</td>
-                        <td>${borrower.A_no}</td>
-                        <td>${borrower.title}</td>
-                        <td>${borrower.dateBorrowing}</td>
-                        <td>${borrower.dateReturn}</td>
-                    </tr>
-                `;
-                borrowerHistoryBody.innerHTML += row;
-            });
-        }
-    </script>
 </body>
 </html>
