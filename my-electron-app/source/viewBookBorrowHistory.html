@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Book Borrower History</title>
+</head>
+<body>
+    <div class="button-group">
+        <input type="text" id="searchBar" placeholder="Search books" oninput="fetchBooks()">
+    </div>
+
+    <table id="bookTable">
+        <thead>
+            <tr>
+                <th>A.no</th>
+                <th>Author</th>
+                <th>Title</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="bookList">
+            <!-- Book records will be displayed here -->
+        </tbody>
+    </table>
+</body>
+</html>
