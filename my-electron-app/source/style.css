@@ -33,13 +33,10 @@ table {
 }
 
 th, td {
-    border: 1px solid #ddd;
+    border: 1px solid;
     padding: 8px;
 }
 
-th {
-    background-color: #f4f4f4;
-}
 
 body {
     font-family: Arial, sans-serif;
@@ -58,3 +55,39 @@ label {
 input, button {
     margin-top: 5px;
 }
+
+button{
+    width: 200px;
+    padding: 15px 0;
+    text-align: center;
+    margin: 20px 10px;
+    border-radius: 25px;
+    font-weight: bold;
+    border: 2px solid #fff;
+    background: transparent;
+    color: #333;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+span{
+    background: #fff;
+    height: 100%;
+    width: 100%;
+    border-radius: 25px;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    z-index: -1;
+    transition: 0.5s;
+}
+
+button:hover span{
+    width: 100%;
+}
+
+button:hover{
+    border: none;
+}
+
