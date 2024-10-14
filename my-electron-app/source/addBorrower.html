@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Borrower</title>
+    <a href="BorrMS.html"><button>Back</button></a>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/dark.css">
 </head>
@@ -24,6 +25,33 @@
         <input type="date" id="dateBorrowing" name="dateBorrowing" required>
         <button type="submit">Add Borrower</button>
     </form>
-    <button type="button"><a href="BorrMS.html"><span></span> Back </a></button>
+
+    <script>
+        document.getElementById('addForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the form from submitting the default way
+
+            // Get form data
+            const borrower = {
+                studentId: document.getElementById('studentId').value,
+                name: document.getElementById('name').value,
+                class: document.getElementById('class').value,
+                aNo: document.getElementById('A_no').value,
+                title: document.getElementById('title').value,
+                dateOfBorrowing: document.getElementById('dateBorrowing').value,
+                dateOfReturn: null // Since it's a new borrower, the return date is null
+            };
+
+            // Send data to backend using IPC
+            window.ipcRenderer.invoke('add-borrower', borrower)
+                .then(response => {
+                    alert(response);
+                    // Optionally redirect back to Borrowers Management page after success
+                    window.location.href = 'BorrMS.html';
+                })
+                .catch(error => {
+                    console.error('Error adding borrower:', error);
+                });
+        });
+    </script>
 </body>
 </html>

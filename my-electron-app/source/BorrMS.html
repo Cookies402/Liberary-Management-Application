@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/dark.css">
 </head>
 <body>
-    <a href="../index.html">Homepage</a>
-    <a href="BooksMS.html">Book Management System</a>
+    <a href="../index.html"><button>Homepage</button></a>
+    <a href="BooksMS.html"><button>Book Management System</button></a>
     
     <h1>Borrowers Management</h1>
 
@@ -26,20 +26,90 @@
     </form>
 
     <table id="borrowersTable">
-        <tr>
-            <th>Student ID</th>
-            <th>Name</th>
-            <th>Class</th>
-            <th>A.no of Borrowed Book</th>
-            <th>Title of Borrowed Book</th>
-            <th>Date of Borrowing</th>
-            <th>Date of Return</th>
-            <th>Action</th>
-        </tr>
+        <thead>
+            <tr>
+                <th>Student ID</th>
+                <th>Name</th>
+                <th>Class</th>
+                <th>A.no of Borrowed Book</th>
+                <th>Title of Borrowed Book</th>
+                <th>Date of Borrowing</th>
+                <th>Date of Return</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Borrower rows will be dynamically inserted here -->
+        </tbody>
     </table>
 
     <script>
-        // Your JavaScript code goes here
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchBorrowers();
+        });
+
+        function fetchBorrowers() {
+            const query = document.getElementById('searchQuery').value;
+            window.ipcRenderer.invoke('fetch-borrowers', query)
+                .then(data => {
+                    displayBorrowers(data);
+                })
+                .catch(error => console.error('Error fetching borrowers:', error));
+        }
+
+        function displayBorrowers(borrowers) {
+            const borrowersTableBody = document.querySelector('#borrowersTable tbody');
+            
+            // Clear the existing rows in the table body
+            borrowersTableBody.innerHTML = '';
+
+            // Loop through each borrower and insert a row
+            borrowers.forEach(borrower => {
+                const row = `
+                    <tr>
+                        <td>${borrower['Student_ID']}</td>
+                        <td>${borrower['Name']}</td>
+                        <td>${borrower['Class']}</td>
+                        <td>${borrower['A_no']}</td>
+                        <td>${borrower['Title']}</td>
+                        <td>${borrower['Date_of_Borrowing']}</td>
+                        <td>${borrower['Date_of_Return'] || 'Not Returned'}</td>
+                        <td>
+                            ${borrower['Date_of_Return'] === null ? 
+                                `<button onclick="markAsReturned(${borrower['Student_ID']})">Mark as Returned</button>` : 
+                                ''
+                            }
+                            <button onclick="deleteBorrower(${borrower['Student_ID']})">Delete</button>
+                        </td>
+                    </tr>
+                `;
+                borrowersTableBody.innerHTML += row;
+            });
+        }                                
+
+        function deleteBorrower(studentId) {
+            if (confirm("Are you sure you want to delete this borrower?")) {
+                window.ipcRenderer.invoke('delete-borrower', studentId)
+                    .then(response => {
+                        alert(response);
+                        fetchBorrowers(); // Refresh the list of borrowers
+                    })
+                    .catch(error => console.error('Error deleting borrower:', error));
+            }
+        }
+
+        // Event listener for the search input to fetch data as the user types
+        document.getElementById('searchQuery').addEventListener('input', fetchBorrowers);
+
+        function markAsReturned(studentId) {
+            const currentDate = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
+            window.ipcRenderer.invoke('mark-as-returned', { studentId, returnDate: currentDate })
+                .then(response => {
+                    alert(response);
+                    fetchBorrowers(); // Refresh the list of borrowers
+                })
+                .catch(error => console.error('Error marking as returned:', error));
+        }
     </script>
 
 </body>

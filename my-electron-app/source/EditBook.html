@@ -3,9 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<a href="BooksMS.html"><button>Back</button></a>
 <title>Edit Book</title>
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/dark.css">
 </head>
 <body>
     <h2>Edit Book Information</h2>
@@ -19,8 +18,31 @@
         <input type="number" step="0.01" id="cost" placeholder="Cost" required>
         <button type="button" onclick="editBook()">Edit Book</button>
     </div>
-    <button type="button"><a href="BooksMS.html"><span></span> Back </a></button>
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const aNo = new URLSearchParams(window.location.search).get('aNo'); 
+            if (aNo) {
+                loadBookDetails(aNo);
+            }
+        });
+    
+        function loadBookDetails(aNo) {
+            window.ipcRenderer.invoke('load-book', aNo)
+                .then(book => {
+                    document.getElementById('aNo').value = book.A_no;
+                    document.getElementById('author').value = book.Author;
+                    document.getElementById('title').value = book.Title;
+                    document.getElementById('pages').value = book.No_of_pages;
+                    document.getElementById('publisher').value = book.Publisher;
+                    document.getElementById('purchaseDate').value = book.Date_of_purchase;
+                    document.getElementById('cost').value = book.Cost;
+                })
+                .catch(error => {
+                    console.error('Error loading book details:', error);
+                    alert('Failed to load book details.');
+                });
+        }
+    
         function editBook() {
             const book = {
                 aNo: document.getElementById('aNo').value,
@@ -31,7 +53,7 @@
                 purchaseDate: document.getElementById('purchaseDate').value,
                 cost: document.getElementById('cost').value
             };
-
+    
             window.ipcRenderer.invoke('edit-book', book)
                 .then(response => {
                     alert(response);
@@ -42,7 +64,7 @@
                     alert('Failed to edit book.');
                 });
         }
-    </script>
+    </script>    
 </body>
 </html>
 

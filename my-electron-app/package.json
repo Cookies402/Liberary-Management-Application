@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/Cookies402/Liberary-Management-Application#readme",
   "devDependencies": {
-    "electron": "^30.0.3"
+    "electron": "^30.5.1"
   },
   "dependencies": {
     "mysql2": "^3.10.0"
