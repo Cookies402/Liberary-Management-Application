@@ -4,19 +4,28 @@
     <meta charset="UTF-8">
     <title>Library Management Application</title>
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    <link rel="stylesheet" href="source/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Arima:wght@100..700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Library Management System</h1>
-    <ul>
-        <button type='button' onclick='location.href="source/BooksMS.html"'>Book Management System</button>
-        <button type='button' onclick='location.href="source/BorrMS.html"'>Borrower Management System</button>
-        <button onclick="quitPage()">Quit</button>
-        <script>
-            function quitPage() {
-                window.close(); 
-            }
-        </script>
-    </ul>
+    <div class="banner">
+        <div class="content">
+            <h1>Library Management System</h1>
+            <br>
+            <div>
+                <button type='button' onclick='location.href="source/BooksMS.html"'><span></span>Book Management System</button>
+                <button type='button' onclick='location.href="source/BorrMS.html"'><span></span>Borrower Management System</button>
+                <br><br><br><button type='button'onclick="quitPage()"><span></span>Quit</button>
+            </div>    
+        </div>
+    </div>
+    <script>
+        function quitPage() {
+        window.close(); 
+        }
+    </script>
 </body>
 </html>
 
