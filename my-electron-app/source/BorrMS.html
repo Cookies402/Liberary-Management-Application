@@ -35,20 +35,22 @@ th, td {
 }
 </style>
 </head>
-<body>
-    <a href="../index.html"><button>Homepage</button></a>
-    <a href="BooksMS.html"><button>Book Management System</button></a>
-    
-    <h1>Borrowers Management</h1>
+<body><div class="navbar">
+    <ul>
+        <li><a href="../index.html">Homepage</a></li>
+        <li><a href="BooksMS.html">Book Management System</a></li>
+    </ul>
+
+</div>
+    <h2>Borrowers Management</h2>
 
     <div>
         <button onclick="location.href='addBorrower.html'">Add Borrower</button>
         <button onclick="location.href='editBorrower.html'">Edit Borrower Info</button>
-        <button id="viewBorrowerHistoryButton">View Borrower History</button>
-        <button id="penaltyButton">Penalty</button>
+        <button onclick="location.href='ViewBookBorrowerHistory.html'">View Borrower History</button>
+        <button onclick="location.href='Penelty.html'">Penalty</button>
     </div>
 
-    <h2>Search Borrowers</h2>
     <form id="searchForm">
         <input type="text" id="searchQuery" name="searchQuery" placeholder="Search...">
     </form>
@@ -69,29 +71,28 @@ th, td {
         <tbody>
             <!-- Borrower rows will be dynamically inserted here -->
         </tbody>
-    </table>
+    </table>    
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            fetchBorrowers();
+            fetchBorrowers();  // Fetch borrowers on page load
         });
 
+        // Fetch borrowers from the database, optionally filtered by search query
         function fetchBorrowers() {
-            const query = document.getElementById('searchQuery').value;
+            const query = document.getElementById('searchQuery').value || '';  // Get search query (empty if not present)
             window.ipcRenderer.invoke('fetch-borrowers', query)
                 .then(data => {
-                    displayBorrowers(data);
+                    displayBorrowers(data);  // Display filtered borrowers
                 })
                 .catch(error => console.error('Error fetching borrowers:', error));
         }
 
+        // Display borrowers in the table
         function displayBorrowers(borrowers) {
-            const borrowersTableBody = document.querySelector('#borrowersTable tbody');
-            
-            // Clear the existing rows in the table body
-            borrowersTableBody.innerHTML = '';
+            const borrowersTable = document.getElementById('borrowersTable').querySelector('tbody');
+            borrowersTable.innerHTML = '';  // Reset the table body
 
-            // Loop through each borrower and insert a row
             borrowers.forEach(borrower => {
                 const row = `
                     <tr>
@@ -110,35 +111,38 @@ th, td {
                             <button onclick="deleteBorrower(${borrower['Student_ID']})">Delete</button>
                         </td>
                     </tr>
-                `;
-                borrowersTableBody.innerHTML += row;
+                    `;
+                borrowersTable.innerHTML += row;
             });
-        }                                
-
-        function deleteBorrower(studentId) {
-            if (confirm("Are you sure you want to delete this borrower?")) {
-                window.ipcRenderer.invoke('delete-borrower', studentId)
-                    .then(response => {
-                        alert(response);
-                        fetchBorrowers(); // Refresh the list of borrowers
-                    })
-                    .catch(error => console.error('Error deleting borrower:', error));
-            }
         }
 
         // Event listener for the search input to fetch data as the user types
         document.getElementById('searchQuery').addEventListener('input', fetchBorrowers);
 
+        // Function to mark a book as returned
         function markAsReturned(studentId) {
             const currentDate = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
             window.ipcRenderer.invoke('mark-as-returned', { studentId, returnDate: currentDate })
                 .then(response => {
                     alert(response);
-                    fetchBorrowers(); // Refresh the list of borrowers
+                    fetchBorrowers();  // Refresh the list of borrowers after update
                 })
                 .catch(error => console.error('Error marking as returned:', error));
         }
-    </script>
+
+        // Function to delete a borrower
+        function deleteBorrower(studentId) {
+            if (confirm('Are you sure you want to delete this borrower?')) {
+                window.ipcRenderer.invoke('delete-borrower', studentId)
+                    .then(response => {
+                        alert(response);
+                        fetchBorrowers();  // Refresh the list after deletion
+                    })
+                    .catch(error => console.error('Error deleting borrower:', error));
+            }
+        }
+    </script>        
 
 </body>
 </html>
+
