@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penalty Management</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/dark.css">
+</head>
+<body>
+    <a href="BorrMS.html"><button>Back</button></a>
+
+    <h1>Penalty Management</h1>
+
+    <h2>Add Penalty</h2>
+    <form id="addPenaltyForm">
+        <input type="number" id="studentId" placeholder="Student ID" required>
+        <input type="number" step="0.01" id="penaltyAmount" placeholder="Penalty Amount" required>
+        <textarea id="penaltyReason" placeholder="Reason" required></textarea>
+        <button type="submit">Add Penalty</button>
+    </form>
+
+    <h2>Existing Penalties</h2>
+    <table id="penaltyTable">
+        <thead>
+            <tr>
+                <th>Student ID</th>
+                <th>Penalty</th>
+                <th>Reason</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Penalty rows will be dynamically inserted here -->
+        </tbody>
+    </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchPenalties();  // Fetch penalties on page load
+        });
+
+        // Fetch penalties from the database
+        function fetchPenalties() {
+            window.ipcRenderer.invoke('fetch-penalties')
+                .then(data => {
+                    displayPenalties(data);  // Display penalties
+                })
+                .catch(error => console.error('Error fetching penalties:', error));
+        }
+
+        // Display penalties in the table
+        function displayPenalties(penalties) {
+            const penaltyTable = document.getElementById('penaltyTable').getElementsByTagName('tbody')[0];
+            penaltyTable.innerHTML = '';
+
+            penalties.forEach(penalty => {
+                const row = `
+                    <tr>
+                        <td>${penalty['Student_ID']}</td>
+                        <td>${penalty['Penalty']}</td>
+                        <td>${penalty['Reason']}</td>
+                        <td>
+                            <button onclick="deletePenalty(${penalty['Penalty_ID']})">Delete</button>
+                        </td>
+                    </tr>
+                `;
+                penaltyTable.innerHTML += row;
+            });
+        }
+
+        // Add penalty to the database
+        document.getElementById('addPenaltyForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const studentId = document.getElementById('studentId').value;
+            const penaltyAmount = document.getElementById('penaltyAmount').value;
+            const reason = document.getElementById('penaltyReason').value;
+
+            window.ipcRenderer.invoke('add-penalty', { studentId, penaltyAmount, reason })
+                .then(response => {
+                    alert(response);
+                    fetchPenalties();  // Refresh the penalties list
+                })
+                .catch(error => console.error('Error adding penalty:', error));
+        });
+
+        // Delete penalty
+        function deletePenalty(penaltyId) {
+            window.ipcRenderer.invoke('delete-penalty', penaltyId)
+                .then(response => {
+                    alert(response);
+                    fetchPenalties();  // Refresh the penalties list after deletion
+                })
+                .catch(error => console.error('Error deleting penalty:', error));
+        }
+    </script>
+</body>
+</html>
